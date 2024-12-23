@@ -68,7 +68,7 @@ const config = {
       footer: {
         style: 'dark',
         links: footerLinks,
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} By Syunn`,
       },
       prism: {
         theme: prismThemes.github,
