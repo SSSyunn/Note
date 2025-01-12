@@ -65,7 +65,63 @@
 
 - 前缀
 
-  - `u`：表示字符或字符串中的字符为`char16_t`类型
-  - `U`：表示字符或字符串中的字符为`char32_t`类型
-  - `L`：表示字符或字符串中的字符为`wchar_t`类型
-  - `u8`（仅字符串）：字符串中的字符为`char`类型，但会转换为`utf-8`编码
+  - `u`：表示字符或字符串中的字符为`char16_t`类型，该前缀的字符或字符串编码会在编译时自动执行从源文件字符集到 UTF-16LE 字符集的转换
+  - `U`：表示字符或字符串中的字符为`char32_t`类型，该前缀的字符或字符串编码会在编译时自动执行从源文件字符集到 UTF-32LE 字符集的转换
+  - `L`：表示字符或字符串中的字符为`wchar_t`类型，该前缀的字符或字符串编码会在编译时自动执行从源文件字符集到 Unicode 字符集的转换，该字符集在 Windows 系统下通常为 UTF-16LE，在 Linux 系统下通常为 UTF-32LE
+  - `u8`（仅字符串）：字符串中的字符为`char`类型，该前缀的字符或字符串编码会在编译时自动执行从源文件字符集到 UTF-8 字符集的转换
+
+
+
+### 3. int系
+
+**简介**：包括`short`、`int`、`long`、`long long`以及它们的无符号版本，即在前面添加`unsigned`关键字，其中`unsigned int`可简写为`unsigned`。未显式添加`unsigned`关键字的整数类型默认都是有符号类型，也可添加`signed`关键字强调。
+
+**实现**
+
+- 有符号整数类型通常采用**补码**实现
+- 整数类型的位数限制为：short(至少16bit)、int(至少16bit)、long(至少32bit)、long long(至少64bit)，另外还需满足以下关系：`1 == sizeof(char) <= sizeof(short) <= sizeof(int) <= sizeof(long) <= sizeof(long long)`
+
+**字面值**
+
+- 整数类型的字面值有 3 种形式：
+
+  - 十进制：以非 0 整数开始的整数，单个数字范围为`0 - 9`
+  - 十六进制：以`0x`或`0X`开始的整数，单个数字范围为`0 - f`
+  - 八进制：以`0`开始的整数，单个数字范围为`0 - 7`
+
+- 后缀及对应类型
+
+  每个整数字面值并不对应一个具体的整数类型，而是有一个候选类型列表，而该字面值的类型为对应候选列表中能保存该字面值的最小类型。而候选列表根据字面值的形式和后缀各有不同，具体情况如下表所示：
+
+  | 后缀                 | 十进制                                                       | 八进制或十六进制                                             |
+  | -------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+  | (无后缀)             | `int`<br />`long int`<br />`long long int`                   | `int`<br />`unsigned int`<br />`long int`<br />`unsigned long int`<br />`long long int`<br />`unsigned long long int` |
+  | `u`或`U`             | `unsigned int`<br />`unsigned long int`<br />`unsigned long long int` | `unsigned int`<br />`unsigned long int`<br />`unsigned long long int` |
+  | `l`或`L`             | `long int`<br />`unsigned long int`<br />`long long int`     | `long int`<br />`unsigned long int`<br />`long long int`<br />`unsigned long long int` |
+  | 同时有`l/L`和`u/U`   | `unsigned long int`<br />`unsigned long long int`            | `unsigned long int`<br />`unsigned long long int`            |
+  | `ll`或`LL`           | `long long int`                                              | `long long int`<br />`unsigned long long int`                |
+  | 同时有`ll/LL`和`u/U` | `unsigned long long int`                                     | `unsigned long long int`                                     |
+
+
+
+### 4. float系
+
+**简介**：包括`float`、`double`和`long double`三种类型
+
+**实现**
+
+- 采用浮点编码实现
+- `float`和`double`通常是 IEEE-754 规定的类型，即`float`为 IEEE-754 binary32 格式，`double`为 IEEE-754 binary64 格式。而`long double`的实现可能是 IEEE-754 binary128 格式；也可能是 80 位 x87 扩展精度格式，许多 x86 和 x86-64 实现使用它（一个典型的例外是 MSVC，它将 long double 实现为与 double 相同的格式，即 binary64）
+
+**字面值**
+
+- 浮点数字面值由小数部分和指数部分构成，当指数部分省略时，小数部分必须要有小数点存在，当小数部分不存在小数点时，指数部分不能省略，即
+  - `3e2`（此处`e2`作为指数部分不能省略）
+  - `3.e2`
+  - `.3e2`
+  - `3.3e2`
+- 后缀及对应类型
+  - (无后缀)：`double`
+  - `f`或`F`：`float`
+  - `l`或`L`：`long double`
+
