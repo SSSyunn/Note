@@ -92,7 +92,69 @@ f(std::nullptr);
 
 ## 整数类型
 
+**概述**：用来表示带符号或不带符号的整数值的类型。
+
+**实现**：
+
+- 带符号整数类型：`short`（至少 16 bit）、`int`（至少 16 bit）、`long`（至少 32 bit）、`long long`（至少 64 bit）
+- 无符号整数类型：`unsigned short`（同`short`）、`unsigned`（同`int`）、`unsigned long`（同`long`）、`unsigned long long`（同`long long`）
+
+> - 以上类型说明符皆为最简写法。在此之上所有带符号整数类型还可以显式添加`signed`作为前缀；除了`int`类型外，其他所有类型都可以添加`int`作为后缀
+> - 带符号整数类型可以用反码、原码或补码实现，在大部分设备上都使用补码实现
+> - 无符号整数类型与其二进制序列可以直接进行代数转换
+> - C++ 标准除了规定最小位数之外，还保证：`1 == sizeof(char) <= sizeof(short) <= sizeof(int) <= sizeof(long) <= sizeof(long long)` 
+
+**字面值**：
+
+- 十进制、八进制或十六进制整数：
+
+  - 十进制整数即以非零十进制数字开始的一个十进制数字（0 ~ 9）序列
+  - 八进制整数是以数字`0`开头的一个八进制数字（0 ~ 7）序列
+  - 十六进制是以字符序列`0x`或`0X`开头的一个十六进制数字（0 ~ f/F）序列
+
+  > 整数字面值实际上不包含负数，但并不影响需要负数时的使用。我们仍然可以在字面值前添加负号（`-`），虽然其实际的效果是一个一元运算符，它的作用是对操作数取负
+
+- 后缀：整数字面值的类型并不一定是一个具体的类型，它的类型取决于后缀、字面值实际大小以及字面值进制这三个方面。根据后缀和进制我们可以得到一个字面值类型的候选列表，然后再根据字面值的实际大小确定该字面值的类型，即**候选列表中能保存该值的最小类型**。具体如下表所示：
+
+  | 后缀                     | 十进制底                                                  | 八进制、十六进制底                                           |
+  | ------------------------ | --------------------------------------------------------- | ------------------------------------------------------------ |
+  | (无后缀)                 | `int`<br />`long`<br />`long long`                        | `int`<br />`unsigned`<br />`long`<br />`unsigned long`<br />`long long`<br />`unsigned long long` |
+  | `u`/`U`                  | `unsigned`<br />`unsigned long`<br />`unsigned long long` | `unsigned`<br />`unsigned long`<br />`unsigned long long`    |
+  | `l`/`L`                  | `long`<br />`long long`                                   | `long`<br />`unsigned long`<br />`long long`<br />`unsigned long long` |
+  | 同时有`l`/`L`和`u`/`U`   | `unsigned long`<br />`unsigned long long`                 | `unsigned long`<br />`unsigned long long`                    |
+  | `ll`/`LL`                | `long long`                                               | `long long`<br />`unsigned long long`                        |
+  | 同时有`ll`/`LL`和`u`/`U` | `unsigned long long`                                      | `unsigned long long`                                         |
+
 
 
 ## 浮点数类型
+
+**概述**：用来表示实数的类型
+
+**实现**：
+
+- `float`：单精度浮点数类型。通常是 [IEEE-754 binary32 格式](https://en.wikipedia.org/wiki/Single-precision_floating-point_format)
+- `double`：双精度浮点数类型。通常是 [IEEE-754 binary64 格式](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
+- `long double`：扩展精度浮点数类型。
+  - 一些 HP-UX、SPARC、MIPS、ARM64 和 z/OS 实现使用 [IEEE-754 binary128 格式](https://en.wikipedia.org/wiki/Quadruple-precision_floating-point_format)。
+  - 最知名的 [IEEE-754 binary64 扩展格式](https://en.wikipedia.org/wiki/Extended_precision)是 80 位 x87 扩展精度格式。许多 x86 和 x86-64 实现使用它（一个典型的例外是 MSVC，它将 long double 实现为与 double 相同的格式，即 binary64）。
+  - 在 PowerPC 上可以使用 [double-double](https://en.wikipedia.org/wiki/Quadruple-precision_floating-point_format#Double-double_arithmetic)。
+
+**字面值**：
+
+- 一个浮点数字面值的必要部分是小数点和指数部分二者其中之一，也可以二者兼有。
+
+  - 若实数部分仅包含整数部分，没有小数点和小数部分，则必须包含指数部分，即：`1e2`、`2E3`
+  - 若实数部分包含小数点，则指数部分为可选，即：`0.`、`3.14`
+  - 当实数部分既包含小数点也包含小数部分时，整数部分也为可选，即：`.314e1`、`.14`
+
+  > 指数部分用`e`/`E`指出，`e/E`后的部分即为指数部分，按照科学计数法进行解释，即以 10 为底的指数。
+  >
+  > 例如：`31.4e-1`即 $31.4\times 10^{-1}$ 
+
+- 后缀
+
+  - 无后缀：浮点数字面值的默认类型为`double`
+  - `f`/`F`：浮点数字面值类型为`float`
+  - `l`/`L`：浮点数字面值类型为`long double`
 
